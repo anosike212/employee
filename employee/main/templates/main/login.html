@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+		<head>
+				<meta charset="utf-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1">
+				<link href="/static/assets/dist/css/normalize.css" rel="stylesheet" type="text/css">
+				<link href="/static/assets/dist/css/skeleton.css" rel="stylesheet" type="text/css">
+				<link rel="stylesheet" href="/static/assets/dist/css/prism.css">
+				<link href="/static/assets/dist/css/index.css" rel="stylesheet" type="text/css">
+				<link href="/static/assets/dist/css/login.css" rel="stylesheet" type="text/css">
+		</head>
+
+		<body>
+			<header>
+				<h1>PLACEHOLDER</h1>
+				<a href="#" class="link_button">Apply now</a>
+			</header>
+			<div id="main">
+				<div id="main_login">
+					<form action="" method="POST">
+						<label for="email">
+							Email Address<br>
+							<input type="text" id="email" name="email" placeholder="Email address">
+						</label>
+						<label for="password">
+							Password<br>
+							<input type="password" id="password" name="password" placeholder="password">
+						</label>
+						<a href="#" id="forgot_pass">Forgot your password?</a>
+						<div class="row_submit">
+							<label for="remember_me">
+								<input type="checkbox" name="remember_me" id="remember_me">Remember me
+							</label>
+						<button type="submit">Proceed</button>
+						</div>
+					</form>
+					<div class="sign_up">
+						<h3 class="sign_up_header">
+							Haven't applied for a job yet?
+						</h3>
+						<a class="sign_up_btn button">Apply at PLACEHOLDER</a>
+					</div>
+				</div>
+			</div>
+			<script>
+				var x = document.body.querySelector(".svg_stuff");
+				window.addEventListener("scroll", (e) => {
+					e.preventDefault();
+				});
+				window.addEventListener("click", () => {
+					console.log("I clicked");
+				})
+			</script>
+		</body>
+</html>

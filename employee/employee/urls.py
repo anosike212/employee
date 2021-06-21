@@ -15,7 +15,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
+from django.conf import settings
+from django.conf.urls.static import static
+from main import urls as main_urls
+# from user import urls as user_urls
+from evaluator import urls as eval_urls
 
 urlpatterns = [
+    url(r'^', include(eval_urls),),
     path('admin/', admin.site.urls),
-]
+    url('^applicant/', include(main_urls, namespace="applicant")),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

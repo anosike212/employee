@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'main.apps.MainConfig',
+    'evaluator.apps.EvaluatorConfig',
+    'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
@@ -119,7 +122,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Media files
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "media/"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# User
+# https://docs.djangoproject.com/en/1.8/topics/auth/customizing/
+
+AUTH_USER_MODEL = "user.User"

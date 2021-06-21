@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="/static/assets/dist/css/normalize.css" rel="stylesheet" type="text/css">
+        <link href="/static/assets/dist/css/skeleton.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="/static/assets/dist/css/prism.css">
+        <link href="/static/assets/dist/css/index.css" rel="stylesheet" type="text/css">
+    </head>
+    
+    <body>
+        <header>
+            <h1>PLACEHOLDER</h1>
+            <a href="#" class="link_button">Apply now</a>
+        </header>
+    
+        <div id="main">
+            <div class="intro_container">
+                <section id="intro_content">
+                    <h3 id="intro_hd">For Developers</h3>
+                    <h1 id="intro_lg">Apply to various positions at PLACEHOLDER company</h1>
+                    <p class="style_p">
+                        Join some of the best programmers in the country with better pay
+                        and compensation with no on-site interview hassles
+                    </p>
+                    <a href="#" class="link_button">Apply now</a>
+                </section>
+                <section id="svg_content">
+                    {% include "main/home_svg.html" %}
+                </section>
+            </div>
+
+            <div class="extra_container">
+                <h2>Why join PLACEHOLDER?</h2>
+                <div id="extra_item_container">
+                    <div class="extra_item">
+                        <div class="extra_item_svg">
+                            {% include "main/svg1.html" %}
+                        </div>
+                        <h3><span class="extra_item_no">1</span>Elite Nigerian jobs</h3>
+                        <p class="style_p">
+                            PLACEHOLDER developers earn better than market pay in most countries
+                        </p>
+                    </div>
+                    <div class="extra_item">
+                        <div class="extra_item_svg">
+                            {% include "main/svg2.html" %}
+                        </div>
+                        <h3><span class="extra_item_no">2</span>Career Growth</h3>
+                        <p class="style_p">
+                            Grow rapidly by working on challenging technical and business
+                            problems on the latest technologies
+                        </p>
+                    </div>
+                    <div class="extra_item">
+                        <div class="extra_item_svg">
+                            {% include "main/svg3.html" %}
+                        </div>
+                        <h3><span class="extra_item_no">3</span>Exclusive Developer Community</h3>
+                        <p class="style_p">
+                            Be a part of a global network of top software engineers
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <pre><code class="language-javascript">
+                    function crap() {
+                        ;
+                    }
+                </code></pre>
+                <pre><code class="language-css">p {color: red;}</code></pre>
+            </div>
+
+        </div>
+        {% comment %} <script src="/static/assets/dist/js/highlight.min.js"></script>
+        <script type="text/javascript">hljs.highlightAll()</script> {% endcomment %}
+        <script src="/static/assets/dist/js/prism.js"></script>
+    </body>
+
+</html>
+
