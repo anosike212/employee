@@ -33,4 +33,5 @@ urlpatterns = [
     url(r"^evaluation/list/$", views.evaluation_list, name="evaluation_list"),
     url(r"^task/(?P<id>\d+)/evaluation/new$", views.evaluation_new, name="evaluation_new"),
     url(r"^task/(?P<id>\d+)/evaluation/edit/$", views.evaluation_edit, name="evaluation_edit"),
+    url(r"^task/(?P<id>\d+)/evaluation/delete/$", views.evaluation_delete, name="evaluation_delete"),
 ]

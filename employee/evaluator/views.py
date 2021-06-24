@@ -409,3 +409,9 @@ def evaluation_edit(request, id):
     print(rating_form)
     context.update({"form": form, "rating_form": rating_form})
     return render(request, "evaluator/evaluation_edit.html", context)
+
+def evaluation_delete(request, id):
+    task = get_object_or_404(Task, id=id)
+    task.evaluation.delete()
+    messages.add_message(request, messages.SUCCESS, "Evaluation deleted successfully")
+    return redirect("evaluation_list")
