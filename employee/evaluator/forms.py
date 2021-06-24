@@ -1,7 +1,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django import forms
-from .models import Task, Progress
+from .models import Task, Progress, Evaluation, Ratings
 
 
 class AuthenticationForm(forms.Form):
@@ -29,3 +29,17 @@ class ProgressForm(forms.ModelForm):
     class Meta:
         model = Progress
         fields = ["description", "complete"]
+
+
+class EvaluationForm(forms.ModelForm):
+
+    class Meta:
+        model = Evaluation
+        fields = "__all__"
+
+
+class RatingsForm(forms.ModelForm):
+
+    class Meta:
+        model = Ratings
+        fields = "__all__"

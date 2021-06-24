@@ -40,9 +40,11 @@
                                 {% csrf_token %}
                                 {% if form.non_field_errors %}
                                     <div class="my_error">
+                                        <ul>
                                         {% for error in form.non_field_errors %}
                                             <li><em>{{ error }}</em></li>
                                         {% endfor %}
+                                        </ul>
                                     </div>
                                 {% endif %}
                                 <div class="col-md-12">

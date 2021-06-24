@@ -21,6 +21,14 @@ class Task(models.Model):
     due_date = models.DateField("Date Due", blank=False)
     created = models.DateField(auto_now_add=True)
 
+    class Meta:
+        get_latest_by = "created"
+
+    def get_absolute_url(self):
+        return reverse("task_detail", kwargs={
+            "id": self.id
+        })
+
     def get_edit_url(self):
         return reverse("task_edit", kwargs={
             "id": self.id
@@ -49,18 +57,26 @@ class Ratings(models.Model):
     timeliness = models.PositiveIntegerField(blank=False, validators=[MaxValueValidator(5)])
     quality = models.PositiveIntegerField(blank=False, validators=[MaxValueValidator(5)])
     accuracy = models.PositiveIntegerField(blank=False, validators=[MaxValueValidator(5)])
-    performance_average = models.PositiveIntegerField(blank=False, validators=[MaxValueValidator(100)])
+    performance_average = models.PositiveIntegerField(blank=True, validators=[MaxValueValidator(100)])
 
     def __str__(self):
-        return f"Efficiency: {self.efficiency}"\
-               f"Timeliness: {self.timeliness}"\
-               f"Quality: {self.quality}"\
-               f"Accuracy: {self.accuracy}"\
+        return f"Efficiency: {self.efficiency}\n"\
+               f"Timeliness: {self.timeliness}\n"\
+               f"Quality: {self.quality}\n"\
+               f"Accuracy: {self.accuracy}\n"\
                f"performance_average: {self.performance_average}"
 
 
 class Evaluation(models.Model):
-    task = models.OneToOneField(Task, on_delete=models.CASCADE, blank=False)
+    task = models.OneToOneField(Task, on_delete=models.CASCADE, blank=True)
     date_evaluated = models.DateField(verbose_name="date evaluated", auto_now_add=True)
     remarks = models.TextField(max_length=300, blank=False)
-    ratings = models.OneToOneField(Ratings, on_delete=models.CASCADE)
+    ratings = models.OneToOneField(Ratings, on_delete=models.CASCADE, blank=True)
+
+    def get_edit_url(self):
+        return reverse("evaluation_edit", kwargs={
+            "id": self.task.id
+        })
+
+    class Meta:
+        ordering = ["-date_evaluated"]

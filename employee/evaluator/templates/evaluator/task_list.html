@@ -79,7 +79,7 @@
                                                 <span class="badge {% if task.status == 'pending' %}bg-orange{% elif task.status == 'in progress' %}bg-cyan{% elif task.status == 'complete' %}bg-green{% endif %}">
                                                     {{ task.status }}
                                                 </span>
-                                                {% if task.due_date < date %}
+                                                {% if task.due_date < date and task.status != "complete" %}
                                                     <span class="badge bg-red">Overdue</span>
                                                 {% endif %}
                                             </td>
@@ -91,10 +91,18 @@
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li><a href="{{ task.get_edit_url }}">Edit</a></li>
-                                                        <li><a class="waves-effect delete_modal" data-toggle="modal" data-target="#smallModal">Delete</a></li>
+                                                        <li><a class="waves-effect delete_modal" data-toggle="modal" data-target="#smallModal" data-delete="{{ task.get_delete_url }}">Delete</a></li>
                                                         <li role="separator" class="divider"></li>
-                                                        <li><a href="javascript:void(0);">View Task</a></li>
-                                                        <li><a href="javascript:void(0);">View Progress</a></li>
+                                                        <li><a onclick="" class="waves-effect view_modal" data-toggle="modal" data-target="#defaultModal" data-task="{{ task.name }}" data-desc="{{ task.description }}">View Task</a></li>
+                                                        <li><a href="javascript:void(0);" class="waves-effect progress_view" data-toggle="modal" data-target="#defaultModal" data-progress="{{ task.id }}">View Progress</a></li>
+                                                        {% if task.status == "complete" %}
+                                                            <li role="seperator" class="divider"></li>
+                                                            {% if task.evaluation %}
+                                                                <li><a class="waves-effect" href="{% url 'evaluation_edit' task.id %}">Edit Evaluation</a></li>
+                                                            {% else %}
+                                                                <li><a class="waves-effect" href="{% url 'evaluation_new' task.id %}">Evaluate</a></li>
+                                                            {% endif %}
+                                                        {% endif %}
                                                     </ul>
                                                 </div>
                                             </td>
@@ -117,11 +125,6 @@
                         <h4 class="modal-title" id="defaultModalLabel">View Task</h4>
                     </div>
                     <div class="modal-body">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sodales orci ante, sed ornare eros vestibulum ut. Ut accumsan
-                        vitae eros sit amet tristique. Nullam scelerisque nunc enim, non dignissim nibh faucibus ullamcorper.
-                        Fusce pulvinar libero vel ligula iaculis ullamcorper. Integer dapibus, mi ac tempor varius, purus
-                        nibh mattis erat, vitae porta nunc nisi non tellus. Vivamus mollis ante non massa egestas fringilla.
-                        Vestibulum egestas consectetur nunc at ultricies. Morbi quis consectetur nunc.
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
@@ -134,10 +137,10 @@
             <div class="modal-dialog modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="smallModalLabel">Modal title</h4>
+                        <!-- <h4 class="modal-title" id="smallModalLabel">Modal title</h4> -->
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete?
+                        Confirm Delete
                     </div>
                     <div class="modal-footer">
                         <a href="#" class="btn btn-link waves-effect delete_obj">delete</a>
@@ -164,4 +167,103 @@
 
     {% block custom_js %}
     <script src="/static/js/pages/tables/jquery-datatable.js"></script>
+
+    <script>
+        var sources = document.querySelectorAll(".delete_modal")
+        var target = document.querySelector("#smallModal .modal-footer a");
+        for (let source of sources) {
+            source.addEventListener("click", (e) => {
+                var href = e.srcElement.getAttribute("data-delete");
+                target.setAttribute("href", String(href));
+            });
+        };
+        function view_task(name, description) {
+            console.log('yes')
+            var modalTitle = document.body.querySelector("#defaultModal .modal-title");
+            modalTitle.textContent = name.toUpperCase();
+            var modalBody = document.body.querySelector("#defaultModal .modal-body")
+            modalBody.textContent = description
+        }
+        var x = document.querySelectorAll(".view_modal");
+        for (let el of x) {
+            el.addEventListener("click", (e) => {
+                var name = e.srcElement.getAttribute("data-task");
+                var description = e.srcElement.getAttribute("data-desc");
+                view_task(name, description)
+            });
+        }
+    </script>
+    <script>
+
+        function modalCleanup() {
+            var list_group = document.body.querySelector(".list-group");
+            list_group.remove();
+        }
+
+        function buildModal(data) {
+            var targetHeading = document.body.querySelector("#defaultModal .modal-title");
+            targetHeading.textContent = "PROGRESS LIST"
+            var targetBody = document.body.querySelector("#defaultModal .modal-body");
+            if (data.progresses.length > 0) {
+                var container = document.createElement("ul");
+                container.className = "list-group";
+                for (let i = 0; i < data.progresses.length; i++) {
+                    var list = document.createElement("li");
+                    list.className = "list-group-item";
+                    list.textContent = data.progresses[i].description;
+                    if (i == 0) {
+                        var badge = document.createElement("span");
+                        if (data.complete) {
+                            badge.textContent = "complete"
+                            badge.className = "badge bg-green";
+                        }
+                        else {
+                            badge.textContent = "in progress";
+                            badge.className = "badge bg-orange";
+                        }
+                        list.appendChild(badge);
+                    }
+                    container.appendChild(list);
+                }
+                targetBody.textContent = "";
+                targetBody.appendChild(container);
+            }
+            else {
+                targetBody.textContent = "No Progress have been made for this task";
+            }
+        }
+
+        /*function callModal(data) {
+            var modalbtn = document.createElement("li");
+            modalbtn.className = "waves-effect delete_modal";
+            modalbtn.setAttribute("data-toggle", "modal");
+            modalbtn.setAttribute("data-target", "#defaultModal");
+            modalbtn.style.display = "none";
+            document.body.appendChild(modalbtn)
+            modalbtn.click()
+            var target = document.body.querySelector("#defaultModal .modal-body")
+            buildModal(data, target)
+        }*/
+
+        function getProgress(id) {
+            $.ajax({
+                "url": `/task/${id}/progress/detail/`,
+                "dataType": "json"
+            }).done(function(data) {
+                console.log(data);
+                buildModal(data);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.log(arguments);
+            })
+        }
+
+        var progress_btn = document.body.querySelectorAll(".progress_view");
+        console.log(progress_btn)
+        for (let btn of progress_btn) {
+            btn.addEventListener("click", (e) => {
+                var id = e.srcElement.getAttribute("data-progress");
+                getProgress(id);
+            })
+        }
+    </script>
     {% endblock %}

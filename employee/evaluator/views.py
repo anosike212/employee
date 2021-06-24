@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+from django.urls import reverse
 from django.contrib.auth import authenticate, login as DjLogin, logout as DjLogout
-from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from .forms import AuthenticationForm
@@ -10,10 +10,14 @@ from evaluator.models import *
 from main.forms import (
     DepartmentForm, DesignationForm,
     EvaluatorForm, EmployeeForm)
-from evaluator.forms import TaskForm, ProgressForm
+from evaluator.forms import (
+    TaskForm, ProgressForm, EvaluationForm, RatingsForm)
 from .models import *
+from .utils import perf_averager
 from user.forms import UserCreationForm
 from datetime import date
+from urllib.parse import urlparse
+import json
 # Create your views here.
 
 User = get_user_model()
@@ -272,17 +276,17 @@ def task_list(request):
     return render(request, "evaluator/task_list.html", {"tasks": tasks, "date": date.today()})
 
 def task_new(request):
+    print(f"request path: {request.path}\nrequest full path: {request.get_full_path()}\nuser: {request.user}")
+    print(urlparse(request.get_full_path()).query.split("="))
     evaluators = Evaluator.objects.all()
     employees = Employee.objects.all()
     context = {"evaluators": evaluators, "employees": employees}
     if request.method == "POST":
         form = TaskForm(request.POST)
         if form.is_valid():
-            print(form)
             task = form.save()
             messages.add_message(request, messages.SUCCESS, f"\"{task.name.title()}\" task created successfully")
             return redirect("task_list")
-        print(form)
         context.update({"form": form})
         return render(request, "evaluator/task_new.html", context)
     return render(request, "evaluator/task_new.html", context)
@@ -307,7 +311,7 @@ def task_edit(request, id):
 def task_delete(request, id):
     task = get_object_or_404(Task, id=id)
     task.delete()
-    messages.add_message(request, messages.SUCCESS, f"\"{task.name.title()}\" task delete successfully")
+    messages.add_message(request, messages.SUCCESS, f"\"{task.name.title()}\" task deleted successfully")
     return redirect("task_list")
 
 def progress_new(request, id):
@@ -320,14 +324,88 @@ def progress_new(request, id):
             progress = form.save(commit=False)
             if request.POST.get("complete"):
                 task.status = "complete"
+                task.save()
             else:
                 task.status = "in progress"
+                task.save()
             progress.task = task
             progress.save()
             messages.add_message(request, messages.SUCCESS, "Progress added successfully")
-            return HttpResponse("saved successfully")
+            return redirect("task_list")
         return render(request, "evaluator/progress_new.html")
 
     form = ProgressForm()
-    print(form)
     return render(request, "evaluator/progress_new.html")
+
+def progress_detail(request, id):
+    task = get_object_or_404(Task, id=id)
+    progresses = task.progresses.all()
+    progresses_dict = [
+        {"description": progress.description}
+        for progress in progresses
+    ]
+    complete_res = {
+        "complete": True if task.status == "complete" else False,
+        "progresses": progresses_dict
+    }
+    return HttpResponse(
+        json.dumps(complete_res),
+        content_type="application/json"
+    )
+
+def evaluation_list(request):
+    evaluations = Evaluation.objects.all()
+    return render(request, "evaluator/evaluation_list.html", {"evaluations": evaluations})
+
+def evaluation_new(request, id):
+    task = get_object_or_404(Task, id=id)
+    if task.status != "complete":
+        error_msg = "You can only evaluate this task once it has been completed!"
+        url = reverse("evaluation_list")
+        context = {"error_msg": error_msg, "url": url}
+        return render(request, "evaluator/error.html", context)
+    context = {"task": task, "count": range(1, 6)}
+    if request.method == "POST":
+        rating_form = RatingsForm(request.POST)
+        form = EvaluationForm(request.POST)
+        if rating_form.is_valid() and form.is_valid():
+            ratings = rating_form.save(commit=False)
+            perf_avg = perf_averager(rating_form)
+            ratings.performance_average = perf_avg
+            ratings.save()
+            evaluation = form.save(commit=False)
+            evaluation.task = task
+            evaluation.ratings = ratings
+            evaluation.save()
+            messages.add_message(request, messages.SUCCESS, "Evaluation edited successfully")
+            return redirect("evaluation_list")
+        context.update({"form": form, "rating_form": rating_form})
+        return render(request, "evaluator/evaluation_new.html", context)
+    return render(request, "evaluator/evaluation_new.html", context)
+
+def evaluation_edit(request, id):
+    task = get_object_or_404(Task, id=id)
+    evaluation = task.evaluation
+    ratings = evaluation.ratings
+    context = {"evaluation": evaluation, "count": range(1, 6)}
+    if request.method == "POST":
+        rating_form = RatingsForm(request.POST, instance=ratings)
+        form = EvaluationForm(request.POST, instance=evaluation)
+        if rating_form.is_valid() and form.is_valid():
+            ratings = rating_form.save(commit=False)
+            perf_avg = perf_averager(rating_form)
+            ratings.performance_average = perf_avg
+            ratings.save()
+            evaluation = form.save(commit=False)
+            evaluation.task = task
+            evaluation.ratings = ratings
+            evaluation.save()
+            messages.add_message(request, messages.SUCCESS, "Evaluation edited successfully")
+            return redirect("evaluation_list")
+        context.update({"form": form, "rating_form": rating_form})
+        return render(request, "evaluator/evaluation_edit.html", context)
+    form = EvaluationForm(instance=evaluation)
+    rating_form = RatingsForm(instance=ratings)
+    print(rating_form)
+    context.update({"form": form, "rating_form": rating_form})
+    return render(request, "evaluator/evaluation_edit.html", context)

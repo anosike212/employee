@@ -21,4 +21,4 @@ class UserCreationForm(MyUserCreationForm):
         match = regex.match(phone_number)
         if not match:
             raise ValidationError("Enter a valid phone number")
-        return phone_number 
+        return phone_number

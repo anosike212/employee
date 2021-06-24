@@ -9,9 +9,13 @@
                     <div class="profile-header">&nbsp;</div>
                     <div class="profile-body">
                         <div class="image-area">
-                            <a href="{{ evaluator.avatar.url }}">
-                                <img width="128" height="128" src="{{ evaluator.avatar.url }}" alt="AdminBSB - Profile Image" />
-                            </a>
+                            {% if evaluator.avatar %}
+                                <a href="{{ evaluator.avatar.url }}">
+                                    <img width="128" height="128" src="{{ evaluator.avatar.url }}" alt="Evaluator picture" />
+                                </a>
+                            {% else %}
+                                <img width="128" height="128" src="/static/images/1.jpg" alt="Evaluator picture">
+                            {% endif %}
                         </div>
                         <div class="content-area">
                             <!-- <h3>

@@ -28,5 +28,9 @@ urlpatterns = [
     url(r"^task/new$", views.task_new, name="task_new"),
     url(r"^task/(?P<id>\d+)/edit/$", views.task_edit, name="task_edit"),
     url(r"^task/(?P<id>\d+)/delete/$", views.task_delete, name="task_delete"),
-    url(r"^task/(?P<id>\d+)/progress/new$", views.progress_new, name="progress")
+    url(r"^task/(?P<id>\d+)/progress/new$", views.progress_new, name="progress"),
+    url(r"^task/(?P<id>\d+)/progress/detail/$", views.progress_detail, name="progress_detail"),
+    url(r"^evaluation/list/$", views.evaluation_list, name="evaluation_list"),
+    url(r"^task/(?P<id>\d+)/evaluation/new$", views.evaluation_new, name="evaluation_new"),
+    url(r"^task/(?P<id>\d+)/evaluation/edit/$", views.evaluation_edit, name="evaluation_edit"),
 ]

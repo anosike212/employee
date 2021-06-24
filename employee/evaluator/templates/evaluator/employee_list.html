@@ -82,8 +82,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li><a href="{{ employee.get_absolute_url }}">View</a></li>
                                                         <li><a href="{{ employee.get_edit_url }}">Edit</a></li>
-                                                        <li><a class="waves-effect delete_modal" data-toggle="modal" data-target="#smallModal">Delete</a></li>
-                                                        <li><a href="{{ department.get_edit_url }}" class="main_delete_btn" style="display: none;"></a></li>
+                                                        <li><a class="waves-effect delete_modal" data-toggle="modal" data-target="#smallModal" data-delete="{{ employee.get_delete_url }}">Delete</a></li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -122,10 +121,10 @@
             <div class="modal-dialog modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="smallModalLabel">Modal title</h4>
+                        <!-- <h4 class="modal-title" id="smallModalLabel">Modal title</h4> -->
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete?
+                        Confirm Delete
                     </div>
                     <div class="modal-footer">
                         <a href="#" class="btn btn-link waves-effect delete_obj">delete</a>
@@ -152,6 +151,16 @@
 
     {% block custom_js %}
     <script src="/static/js/pages/tables/jquery-datatable.js"></script>
+    <script>
+        var sources = document.querySelectorAll(".delete_modal")
+        var target = document.querySelector("#smallModal .modal-footer a");
+        for (let source of sources) {
+            source.addEventListener("click", (e) => {
+                var href = e.srcElement.getAttribute("data-delete");
+                target.setAttribute("href", String(href));
+            });
+        };
+    </script>
     {% endblock %}
 </body>
 

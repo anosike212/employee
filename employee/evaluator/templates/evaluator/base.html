@@ -33,6 +33,8 @@
     <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
     <link href="/static/css/themes/all-themes.css" rel="stylesheet" />
     <link href="/static/css/my_style.css" rel="stylesheet">
+    <script src="/static/plugins/jquery/jquery.min.js"></script>
+    {% block custom_ajax %}{% endblock %}
 </head>
 
 <body class="theme-red">
@@ -118,7 +120,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="" title="Not yet written its code">
+                        <a href="{% url 'evaluation_list' %}">
                             <i class="material-icons col-custom2">poll</i>
                             <span class="col-white">Evaluation</span>
                         </a>
