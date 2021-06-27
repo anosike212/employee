@@ -4,7 +4,12 @@ cs project
 # install django
 # run >>python manage.py runserver in the employee folder
 
-go to localhost:8000/login in your browser
+********USE GIT PULL**********
 
-email=> anosike212@gmail.com
-password=> rave4x10
+# run >> python manage.py shell
+from django.contrib.auth import get_user_model
+User = get_user_model()
+User.objects.create_superuser(username="*****", email="******", password="******")
+
+go to localhost:8000/admin/home in your browser
+input your login details as a superuser
