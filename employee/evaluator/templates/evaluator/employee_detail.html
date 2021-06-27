@@ -36,16 +36,16 @@
                     <div class="profile-footer">
                         <ul>
                             <li>
-                                <span>Followers</span>
-                                <span>1.234</span>
+                                <span>InProgress Tasks</span>
+                                <span>{{ inprogress_tasks }}</span>
                             </li>
                             <li>
-                                <span>Following</span>
-                                <span>1.201</span>
+                                <span>Pending Tasks</span>
+                                <span>{{ pending_tasks }}</span>
                             </li>
                             <li>
-                                <span>Friends</span>
-                                <span>14.252</span>
+                                <span>Completed Tasks</span>
+                                <span>{{ completed_tasks }}</span>
                             </li>
                         </ul>
                         {% if employee.cv %}

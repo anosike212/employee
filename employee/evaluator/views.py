@@ -2,8 +2,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login as DjLogin, logout as DjLogout
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from .forms import AuthenticationForm
 from main.models import *
 from evaluator.models import *
@@ -18,6 +20,7 @@ from user.forms import UserCreationForm
 from datetime import date
 from urllib.parse import urlparse
 import json
+import copy
 # Create your views here.
 
 User = get_user_model()
@@ -33,14 +36,12 @@ def login(request):
             'password': password
         }
         form = AuthenticationForm(form_data)
-        print(form)
         if form.is_valid():
             user = authenticate(email=email, password=password)
             if user:
                 DjLogin(request, user)
                 return redirect("home")
             else:
-                # form.non_field_errors.append("Email/Password is Invalid")
                 return render(request, "evaluator/login.html", {"form": form, "errors": ["Email/Password is invalid"]})
         else:
             return render(request, "evaluator/login.html", {"form": form})
@@ -53,32 +54,82 @@ def logout(request):
 def test(request):
     return HttpResponse(f"{request.user.email}")
 
+@login_required
 def home(request):
-    departments = Department.objects.count()
-    designations = Designation.objects.count()
-    users = get_user_model().objects.count()
-    employees = Employee.objects.count()
-    evaluators = Evaluator.objects.count()
-    tasks = Task.objects.count()
-    context = {
-        "departments": departments,
-        "designations": designations,
-        "users": users,
-        "employees": employees,
-        "evaluators": evaluators,
-        "tasks": tasks
-    }
+    user = request.user
+    context = None
+    if not user.is_superuser:
+        for group in user.groups.all():
+            if group.name == "employees":
+                tasks = Task.objects.filter(assigned_to=user.employee)
+                latest_tasks = list(tasks)
+                latest_tasks.reverse()
+                latest_tasks = latest_tasks[:5]
+                pending_tasks = tasks.filter(status = "pending")
+                inprogress_tasks = tasks.filter(status = "in progress")
+                context = {
+                    "tasks": tasks,
+                    "latest_tasks": latest_tasks,
+                    "pending_tasks": pending_tasks,
+                    "inprogress_tasks": inprogress_tasks
+                }
+            elif group.name == "evaluators":
+                tasks = Task.objects.filter(evaluator=user.evaluator)
+                latest_tasks = list(tasks)
+                latest_tasks.reverse()
+                latest_tasks = latest_tasks[:5]
+                pending_eval = []
+                total_eval = []
+                completed_tasks = tasks.filter(status = "complete")
+                for task in completed_tasks:
+                    try:
+                        task.evaluation
+                    except Task.evaluation.RelatedObjectDoesNotExist:
+                        pending_eval.append(task)
+                    else:
+                        total_eval.append(task)
+                context = {
+                    "tasks": tasks,
+                    "latest_tasks": latest_tasks,
+                    "pending_eval": pending_eval,
+                    "total_eval": total_eval,
+                }
+    else:
+        departments = Department.objects.count()
+        designations = Designation.objects.count()
+        users = get_user_model().objects.count()
+        employees = Employee.objects.count()
+        evaluators = Evaluator.objects.count()
+        tasks = Task.objects.all()
+        latest_tasks = list(tasks)
+        latest_tasks.reverse()
+        latest_tasks = latest_tasks[:5]
+        context = {
+            "departments": departments,
+            "designations": designations,
+            "users": users,
+            "employees": employees,
+            "evaluators": evaluators,
+            "tasks": tasks,
+            "latest_tasks": latest_tasks,
+        }
     print(context)
     return render(request, "evaluator/home.html", context)
 
+@login_required
+@permission_required("main.view_department", raise_exception=True)
 def department_list(request):
     departments = Department.objects.all()
     return render(request, "evaluator/department_list.html", {"departments": departments})
 
+@login_required
+@permission_required("main.view_designation", raise_exception=True)
 def designation_list(request):
     designations = Designation.objects.all()
     return render(request, "evaluator/designation_list.html", {"designations": designations})
 
+@login_required
+@permission_required("main.add_department", raise_exception=True)
 def department_new(request):
     if request.method == "POST":
         form = DepartmentForm(request.POST)
@@ -91,6 +142,8 @@ def department_new(request):
             return render(request, "evaluator/department_new.html", {"form": form})
     return render(request, "evaluator/department_new.html")
 
+@login_required
+@permission_required("main.add_designation", raise_exception=True)
 def designation_new(request):
     if request.method == "POST":
         form = DesignationForm(request.POST)
@@ -102,6 +155,8 @@ def designation_new(request):
             return render(request, "evaluator/designation_new.html", {"form": form})
     return render(request, "evaluator/designation_new.html")
 
+@login_required
+@permission_required("main.change_department", raise_exception=True)
 def department_edit(request, id):
     department = get_object_or_404(Department, id=id)
     context = {"department": department}
@@ -119,6 +174,8 @@ def department_edit(request, id):
     context.update({"form": form})
     return render(request, "evaluator/department_edit.html", context)
 
+@login_required
+@permission_required("main.change_designation", raise_exception=True)
 def designation_edit(request, id):
     designation = get_object_or_404(Designation, id=id)
     context = {"designation": designation}
@@ -135,22 +192,30 @@ def designation_edit(request, id):
     context.update({"form": form})
     return render(request, "evaluator/designation_edit.html", context)
 
+@login_required
+@permission_required("main.delete_department", raise_exception=True)
 def department_delete(request, id):
     department = get_object_or_404(Department, id=id)
     department.delete()
     messages.add_message(request, messages.SUCCESS, f"{department.name.title() } Department deleted successfully!")
     return redirect("department_list")
 
+@login_required
+@permission_required("main.delete_designation", raise_exception=True)
 def designation_delete(request, id):
     designation = get_object_or_404(Designation, id=id)
     designation.delete()
     messages.add_message(request, messages.SUCCESS, f"{designation.name.title()} Designation deleted successfully!")
     return redirect("designation_list")
 
+@login_required
+@permission_required("main.view_evaluator", raise_exception=True)
 def evaluator_list(request):
     evaluators = Evaluator.objects.all()
     return render(request, "evaluator/evaluator_list.html", {"evaluators": evaluators})
 
+@login_required
+@permission_required("main.add_evaluator", raise_exception=True)
 def evaluator_new(request):
     if request.POST:
         form = UserCreationForm(request.POST)
@@ -161,16 +226,37 @@ def evaluator_new(request):
                 avatar=avatar,
                 user = user
             )
+            user.groups.add(Group.objects.get(name="evaluators"))
             messages.add_message(request, messages.SUCCESS, f"Evaluator with email: {user.email} created successfully")
             return redirect("evaluator_list")
         else:
             return render(request, "evaluator/evaluator_new.html", {"form": form})
     return render(request, "evaluator/evaluator_new.html")
 
+@login_required
+@permission_required("main.view_evaluator", raise_exception=True)
 def evaluator_detail(request, id):
     evaluator = get_object_or_404(Evaluator, id=id)
-    return render(request, "evaluator/evaluator_detail.html", {"evaluator": evaluator})
+    tasks = Task.objects.filter(evaluator=evaluator)
+    pending_eval = []
+    total_eval = []
+    completed_tasks = tasks.filter(status = "complete")
+    for task in completed_tasks:
+        try:
+            task.evaluation
+        except Task.evaluation.RelatedObjectDoesNotExist:
+            pending_eval.append(task)
+        else:
+            total_eval.append(task)
+    context = {
+        "evaluator": evaluator,
+        "pending_eval": len(pending_eval),
+        "completed_eval": len(total_eval),
+    }
+    return render(request, "evaluator/evaluator_detail.html", context)
 
+@login_required
+@permission_required("main.change_evaluator", raise_exception=True)
 def evaluator_edit(request, id):
     evaluator = get_object_or_404(Evaluator, id=id)
     context = {"evaluator": evaluator}
@@ -195,16 +281,22 @@ def evaluator_edit(request, id):
     context.update({"form": form})
     return render(request, "evaluator/evaluator_edit.html", context)
 
+@login_required
+@permission_required("main.delete_evaluator", raise_exception=True)
 def evaluator_delete(request, id):
     evaluator = Evaluator.objects.get(id=id)
     evaluator.user.delete()
     messages.add_message(request, messages.SUCCESS, f"user with email: {evaluator.user.email} delete successfully")
     return redirect("evaluator_list")
 
+@login_required
+@permission_required("main.view_employee", raise_exception=True)
 def employee_list(request):
     employees = Employee.objects.all()
     return render(request, "evaluator/employee_list.html", {"employees": employees})
 
+@login_required
+@permission_required("main.add_employee", raise_exception=True)
 def employee_new(request):
     designations = Designation.objects.all()
     departments = Department.objects.all()
@@ -219,17 +311,30 @@ def employee_new(request):
             employee.save()
             employee.designations.set(employee_form.cleaned_data["designations"])
             employee.departments.set(employee_form.cleaned_data["departments"])
+            user.groups.add(Group.objects.get(name="employees"))
             messages.add_message(request, messages.SUCCESS, f"Employee with email: {user.email} created successfully")
             return redirect("employee_list")
         context.update({"employee_form": employee_form, "user_form": user_form})
         return render(request, "evaluator/employee_new.html", context)
     return render(request, "evaluator/employee_new.html", context)
 
-def employee_update(request, id):
+@login_required
+@permission_required("main.view_employee", raise_exception=True)
+def employee_detail(request, id):
     employee = get_object_or_404(Employee, id=id)
+    tasks = Task.objects.filter(assigned_to=employee)
+    pending_tasks = tasks.filter(status = "pending")
+    inprogress_tasks = tasks.filter(status = "in progress")
     context = {"employee": employee, "colors": COLORS}
+    context.update({
+        "pending_tasks": pending_tasks.count(),
+        "inprogress_tasks": inprogress_tasks.count(),
+        "completed_tasks": tasks.count() - pending_tasks.count() - inprogress_tasks.count()
+    })
     return render(request, "evaluator/employee_detail.html", context)
 
+@login_required
+@permission_required("main.change_employee", raise_exception=True)
 def employee_edit(request, id):
     employee = get_object_or_404(Employee, id=id)
     designations = Designation.objects.all()
@@ -260,21 +365,42 @@ def employee_edit(request, id):
     context.update({"form": form, "employee_form": employee_form})
     return render(request, "evaluator/employee_edit.html", context)
 
+@login_required
+@permission_required("main.employee_delete", raise_exception=True)
 def employee_delete(request, id):
     employee = get_object_or_404(Employee, id=id)
     employee.user.delete()
     messages.add_message(request, messages.SUCCESS, f"Employee with email: {employee.user.email} deleted successfully")
     return redirect("employee_list")
 
+@login_required
+@permission_required("evaluator.view_task", raise_exception=True)
 def task_list(request):
-    tasks = Task.objects.all()
+    user = request.user
+    context = {}
+    if not user.is_superuser:
+        for group in user.groups.all():
+            if group.name == "employees":
+                context.update({
+                    "tasks": Task.objects.filter(assigned_to=user.employee)
+                })
+            elif group.name == "evaluators":
+                context.update({
+                    "tasks": Task.objects.filter(evaluator=user.evaluator)
+                })
+    else:
+        tasks = Task.objects.all()
+        context.update({"tasks": tasks})
     COLORS = {
         "pending": "bg-cyan",
         "in progress": "bg-orange",
         "complete": "bg-red",
     }
-    return render(request, "evaluator/task_list.html", {"tasks": tasks, "date": date.today()})
+    context.update({"date": date.today()})
+    return render(request, "evaluator/task_list.html", context)
 
+@login_required
+@permission_required("evaluator.add_task", raise_exception=True)
 def task_new(request):
     print(f"request path: {request.path}\nrequest full path: {request.get_full_path()}\nuser: {request.user}")
     print(urlparse(request.get_full_path()).query.split("="))
@@ -291,6 +417,8 @@ def task_new(request):
         return render(request, "evaluator/task_new.html", context)
     return render(request, "evaluator/task_new.html", context)
 
+@login_required
+@permission_required("evaluator.change_task", raise_exception=True)
 def task_edit(request, id):
     task = get_object_or_404(Task, id=id)
     evaluators = Evaluator.objects.all()
@@ -308,12 +436,16 @@ def task_edit(request, id):
     context.update({"form": form})
     return render(request, "evaluator/task_edit.html", context)
 
+@login_required
+@permission_required("evaluator.delete_task", raise_exception=True)
 def task_delete(request, id):
     task = get_object_or_404(Task, id=id)
     task.delete()
     messages.add_message(request, messages.SUCCESS, f"\"{task.name.title()}\" task deleted successfully")
     return redirect("task_list")
 
+@login_required
+@permission_required("evaluator.add_progress", raise_exception=True)
 def progress_new(request, id):
     task = get_object_or_404(Task, id=id)
     if task.status == "complete":
@@ -337,6 +469,8 @@ def progress_new(request, id):
     form = ProgressForm()
     return render(request, "evaluator/progress_new.html")
 
+@login_required
+@permission_required("evaluator.view_progress", raise_exception=True)
 def progress_detail(request, id):
     task = get_object_or_404(Task, id=id)
     progresses = task.progresses.all()
@@ -353,10 +487,14 @@ def progress_detail(request, id):
         content_type="application/json"
     )
 
+@login_required
+@permission_required("evaluator.view_evaluation", raise_exception=True)
 def evaluation_list(request):
     evaluations = Evaluation.objects.all()
     return render(request, "evaluator/evaluation_list.html", {"evaluations": evaluations})
 
+@login_required
+@permission_required("evaluator.add_evaluation", raise_exception=True)
 def evaluation_new(request, id):
     task = get_object_or_404(Task, id=id)
     if task.status != "complete":
@@ -383,6 +521,8 @@ def evaluation_new(request, id):
         return render(request, "evaluator/evaluation_new.html", context)
     return render(request, "evaluator/evaluation_new.html", context)
 
+@login_required
+@permission_required("evaluator.change_evaluation", raise_exception=True)
 def evaluation_edit(request, id):
     task = get_object_or_404(Task, id=id)
     evaluation = task.evaluation
@@ -410,6 +550,8 @@ def evaluation_edit(request, id):
     context.update({"form": form, "rating_form": rating_form})
     return render(request, "evaluator/evaluation_edit.html", context)
 
+@login_required
+@permission_required("evaluator.delete_evaluation", raise_exception=True)
 def evaluation_delete(request, id):
     task = get_object_or_404(Task, id=id)
     task.evaluation.delete()

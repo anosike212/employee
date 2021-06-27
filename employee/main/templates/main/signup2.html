@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="/static/assets/dist/css/normalize.css" rel="stylesheet" type="text/css">
+        <link href="/static/assets/dist/css/skeleton.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="/static/assets/dist/css/prism.css">
+        <link href="/static/assets/dist/css/index.css" rel="stylesheet" type="text/css">
+		<link href="/static/assets/dist/css/signup.css" rel="stylesheet" type="text/css">
+    </head>
+
+	<body>
+		<header>
+			<h1>PLACEHOLDER</h1>
+		</header>
+		<div id="main">
+			<div id="main_signup">
+				<form action="" method="POST" enctype="multipart/form-data">
+					<fieldset class="login_details">
+						<legend>Login details</legend>
+						<label for="email">
+							What's your email<br>
+							<input type="email" name="email" id="email" placeholder="Enter your email" required>
+						</label>
+						<label for="password">
+							Create a password<br>
+							<input type="password" name="password" id="password" placeholder="Enter your password" required>
+						</label>
+						<label for="password2">
+							Confirm your password<br>
+							<input type="password" name="password2" id="password2" placeholder="Enter your password again" required>
+						</label>
+					</fieldset>
+					
+					<fieldset class="personal_details">
+						<legend>Personal details</legend>
+						<label for="first_name">
+							What's your first name<br>
+							<input type="text" name="first_name" id="first_name" placeholder="Enter your first name" required>
+						</label>
+						<label for="middle_name">
+							What's your middle name<br>
+							<input type="text" name="middle_name" id="middle_name" placeholder="Enter your middle name" required>
+						</label>
+						<label for="last_name">
+							What's your surname<br>
+							<input type="text" name="last_name" id="last_name" placeholder="Enter your last name" required>
+						</label>
+						<label for="phone">
+							What's your phone no<br>
+							<input type="text" name="phone" id="phone" placeholder="Enter your phone no" required>
+						</label>
+						<div class="avatar_img">
+							<a class="avatar_select fake_btn button">Upload your profile photo</a><br>
+							<img class="upload_file avatar_pic" src="/static/assets/uploads/1607134320_avatar.jpg">
+						</div>
+					</fieldset>
+
+					<fieldset class="work_details">
+						<legend>Work details</legend>
+						<label for="github">
+							What's your github page link<br>
+							<input type="url" name="github" id="github" placeholder="Enter your github page link">
+						</label>
+						<label for="designation">
+							What level are you at<br>
+							<select name="designation" id="designation">
+								<option value=""></option>
+							</select>
+						</label>
+						<label for="department">
+							What department are you applying to <br>
+							<select name="department" id="department">
+								<option value=""></option>
+							</select>
+						</label>
+						<div class="cv_doc">
+							<a class="cv_select fake_btn button">Upload your cv</a>
+							<img class="upload_file" src="/static/assets/uploads/cv.png">
+						</div>
+					</fieldset>
+					<button type="submit">Submit</button>
+				</form>
+				<!-- <div class="form_nav">
+					<button class="prev_btn not_visible">Prev</button>
+					<button class="next_btn">Next</button>
+				</div> -->
+			</div>
+		<div>
+
+		<script>
+			function fileManipulator (query, img) {
+				var el = document.body.querySelector(query);
+				var imageEl = document.body.querySelector(img);
+				el.addEventListener("change", () => {
+					for (let file of Array.from(el.files)) {
+						let reader = new FileReader()
+						reader.addEventListener("load", () => {
+							imageEl.src = reader.result;
+						});
+						reader.readAsDataURL(file);
+						console.log(el.files)
+					}
+				});
+			}
+			var avatar = document.body.querySelector(".avatar_select");
+			avatar.addEventListener("click", () => {
+				var avatar_input = document.body.querySelector("input[name=avatar]");
+				if (avatar_input) {
+					;
+				}
+				else {
+					avatar_input = document.createElement("input")
+					avatar_input.type = "file";
+					avatar_input.name = "avatar";
+					avatar_input.hidden = "hidden";
+					console.log(avatar_input)
+					avatar.parentElement.appendChild(avatar_input);
+				}
+				fileManipulator("input[name=avatar]", ".avatar_pic");
+					avatar_input.click();
+			});	
+		</script>
+		<!-- <script src="/static/assets/dist/js/formcontrol.js"></script> -->
+	</body>
+</html>

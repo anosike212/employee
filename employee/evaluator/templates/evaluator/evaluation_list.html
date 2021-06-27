@@ -51,7 +51,9 @@
                                         <th>#</th>
                                         <th>Task</th>
                                         <th>Assigned To</th>
-                                        <th>Evaluator</th>
+                                        {% if user.is_superuser %}
+                                            <th>Evaluator</th>
+                                        {% endif %}
                                         <th>Performance Average</th>
                                         <th>Date Evaluated</th>
                                         <th>Action</th>
@@ -62,7 +64,9 @@
                                         <th>#</th>
                                         <th>Task</th>
                                         <th>Assigned To</th>
-                                        <th>Evaluator</th>
+                                        {% if user.is_superuser %}
+                                            <th>Evaluator</th>
+                                        {% endif %}
                                         <th>Performance Average</th>
                                         <th>Date Evaluated</th>
                                         <th>Action</th>
@@ -74,7 +78,9 @@
                                             <td>{{ forloop.counter }}</td>
                                             <td>{{ evaluation.task.name|title }}</td>
                                             <td>{{ evaluation.task.assigned_to|title }}</td>
-                                            <td>{{ evaluation.task.evaluator|title }}</td>
+                                            {% if user.is_superuser %}
+                                                <td>{{ evaluation.task.evaluator|title }}</td>
+                                            {% endif %}
                                             <td>{{ evaluation.ratings.performance_average }}.00%</td>
                                             <td>{{ evaluation.date_evaluated }}</td>
                                             <td>
@@ -83,12 +89,19 @@
                                                         Action <span class="caret"></span>
                                                     </button>
                                                     <ul class="dropdown-menu">
-                                                        <li><a href="{{ evaluation.get_edit_url }}">Edit</a></li>
-                                                        <!-- <li><a class="waves-effect delete_modal" data-toggle="modal" data-target="#smallModal">Delete</a></li> -->
-                                                        <li><a class="waves-effect delete_modal" data-toggle="modal" data-target="#smallModal" data-delete="{% url 'evaluation_delete' evaluation.task.id %}">Delete</a></li>
+                                                        {% if perms.evaluator.change_evaluation %}
+                                                            <li><a href="{{ evaluation.get_edit_url }}">Edit</a></li>
+                                                        {% endif %}
+                                                        {% if perms.evaluator.delete_evaluation %}
+                                                            <li><a class="waves-effect delete_modal" data-toggle="modal" data-target="#smallModal" data-delete="{% url 'evaluation_delete' evaluation.task.id %}">Delete</a></li>
+                                                        {% endif %}
                                                         <li role="separator" class="divider"></li>
-                                                        <li><a class="waves-effect view_modal" data-toggle="modal" data-target="#defaultModal" data-task="{{ evaluation.task.name }}" data-desc="{{ evaluation.task.description }}">View Task</a></li>
+                                                        {% if perms.evaluator.view_task %}
+                                                            <li><a class="waves-effect view_modal" data-toggle="modal" data-target="#defaultModal" data-task="{{ evaluation.task.name }}" data-desc="{{ evaluation.task.description }}">View Task</a></li>
+                                                        {% endif %}
+                                                        {% if perms.evaluator.view_progress %}
                                                         <li><a class="waves-effect progress_view" data-toggle="modal" data-target="#defaultModal" data-progress="{{ evaluation.task.id }}">View Progress</a></li>
+                                                        {% endif %}
                                                     </ul>
                                                 </div>
                                             </td>
@@ -124,7 +137,7 @@
             <div class="modal-dialog modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" id="smallModalLabel">Modal title</h4>
+                        <!-- <h4 class="modal-title" id="smallModalLabel">Modal title</h4> -->
                     </div>
                     <div class="modal-body">
                         Are you sure you want to delete?
@@ -233,7 +246,7 @@
 
         function getProgress(id) {
             $.ajax({
-                "url": `/task/${id}/progress/detail/`,
+                "url": `/admin/task/${id}/progress/detail/`,
                 "dataType": "json"
             }).done(function(data) {
                 console.log(data);

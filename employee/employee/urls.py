@@ -23,7 +23,6 @@ from main import urls as main_urls
 from evaluator import urls as eval_urls
 
 urlpatterns = [
-    url(r'^', include(eval_urls),),
-    path('admin/', admin.site.urls),
-    url('^applicant/', include(main_urls, namespace="applicant")),
+    url(r'^', include(main_urls)),
+    path('admin/', include(eval_urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

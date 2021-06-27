@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="/static/assets/dist/css/normalize.css" rel="stylesheet" type="text/css">
-        <link href="/static/assets/dist/css/skeleton.css" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="/static/assets/dist/css/prism.css">
-        <link href="/static/assets/dist/css/index.css" rel="stylesheet" type="text/css">
+        <link href="/static/css/normalize.css" rel="stylesheet" type="text/css">
+        <link href="/static/css/skeleton.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="/static/css/prism.css">
+        <link href="/static/css/index.css" rel="stylesheet" type="text/css">
     </head>
     
     <body>
@@ -67,17 +67,20 @@
 
             <div>
                 <pre><code class="language-javascript">
-                    function crap() {
-                        ;
-                    }
-                </code></pre>
-                <pre><code class="language-css">p {color: red;}</code></pre>
+                        function welcome() {
+                            alert("hello world");
+                        }
+                    </code><code class="language-python">
+                        def welcome():
+                            print("hello world")
+                    </code></pre>
+                <!-- <pre><code class="language-css">p {color: red;}</code></pre> -->
             </div>
 
         </div>
         {% comment %} <script src="/static/assets/dist/js/highlight.min.js"></script>
         <script type="text/javascript">hljs.highlightAll()</script> {% endcomment %}
-        <script src="/static/assets/dist/js/prism.js"></script>
+        <script src="/static/js/prism.js"></script>
     </body>
 
 </html>

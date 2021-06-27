@@ -75,7 +75,18 @@
             <div class="navbar-header">
                 <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
                 <a href="javascript:void(0);" class="bars"></a>
-                <a class="navbar-brand" href="{% url 'home' %}">PLACEHOLDER - HOME</a>
+                <a class="navbar-brand" href="{% url 'home' %}">
+                    PLACEHOLDER - HOME
+                    {% if user.is_superuser %}
+                        (ADMIN)
+                    {% else %}
+                        {% if user.evaluator %}
+                            (EVALUATOR)
+                        {% elif user.employee %}
+                            (EMPLOYEE)
+                        {% endif %}
+                    {% endif %}
+                </a>
             </div>
         </div>
     </nav>
@@ -95,8 +106,14 @@
                         <div class="btn-group user-helper-dropdown">
                             <i class="material-icons col-black" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                             <ul class="dropdown-menu pull-right col-black">
-                                <!-- <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li> -->
-                                <li><a href="{% url 'logout' %}"><i class="material-icons">input</i>Sign Out</a></li>
+                                {% if not user.is_superuser %}
+                                    {% if perms.main.change_evaluator %}
+                                        <li><a href="javascript:void(0);"><i class="material-icons">person</i>View Profile</a></li>
+                                    {% elif perms.main.change_employee %}
+                                        <li><a href="{% url 'employee_update' user.employee.id %}"><i class="material-icons">person</i>View Profile</a></li>
+                                    {% endif %}
+                                {% endif %}
+                                <li><a href="/admin/logout/"><i class="material-icons">input</i>Sign Out</a></li>
                             </ul>
                         </div>
                     {% endif %}
@@ -113,66 +130,86 @@
                             <span class="col-white">Home</span>
                         </a>
                     </li>
+                    {% if perms.evaluator.view_task %}
                     <li>
                         <a href="{% url 'task_list' %}">
                             <i class="material-icons col-custom2">playlist_add_check</i>
                             <span class="col-white">Tasks</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if perms.evaluator.view_evaluation %}
                     <li>
                         <a href="{% url 'evaluation_list' %}">
                             <i class="material-icons col-custom2">poll</i>
                             <span class="col-white">Evaluation</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if perms.main.view_department %}
                     <li>
                         <a href="{% url 'department_list' %}">
                             <i class="material-icons col-custom2">business_center</i>
                             <span class="col-white">Departments</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if perms.main.view_designation %}
                     <li>
                         <a href="{% url 'designation_list' %}">
                             <i class="material-icons col-custom2">kitchen</i>
                             <span class="col-white">Designations</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if perms.main.add_employee or perms.main.view_employee %}
                     <li>
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons col-custom2">sentiment_very_satisfied</i>
                             <span class="col-white">Employees</span>
                         </a>
                         <ul class="ml-menu">
+                            {% if perms.main.add_employee %}
                             <li>
                                 <a href="{% url 'employee_new' %}">
                                     <span class="col-white">Add New</span>
                                 </a>
                             </li>
+                            {% endif %}
+                            {% if perms.main.view_employee %}
                             <li>
                                 <a href="{% url 'employee_list' %}">
                                     <span class="col-white">List</span>
                                 </a>
                             </li>
+                            {% endif %}
                         </ul>
                     </li>
+                    {% endif %}
+                    {% if perms.main.add_evaluator or perms.main.view_evaluator %}
                     <li>
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons col-custom2">supervisor_account</i>
                             <span class="col-white">Evaluators</span>
                         </a>
                         <ul class="ml-menu">
+                            {% if perms.main.add_evaluator %}
                             <li>
                                 <a href="{% url 'evaluator_new' %}">
                                     <span class="col-white">Add New</span>
                                 </a>
                             </li>
+                            {% endif %}
+                            {% if perms.main.view_evaluator %}
                             <li>
                                 <a href="{% url 'evaluator_list' %}">
                                     <span class="col-white">List</span>
                                 </a>
                             </li>
+                            {% endif %}
                         </ul>
                     </li>
+                    {% endif %}
                     <!-- <li>
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="material-icons">person_add</i>

@@ -1,127 +1,248 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="/static/assets/dist/css/normalize.css" rel="stylesheet" type="text/css">
-        <link href="/static/assets/dist/css/skeleton.css" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="/static/assets/dist/css/prism.css">
-        <link href="/static/assets/dist/css/index.css" rel="stylesheet" type="text/css">
-		<link href="/static/assets/dist/css/signup.css" rel="stylesheet" type="text/css">
-    </head>
+<html>
 
-	<body>
-		<header>
-			<h1>PLACEHOLDER</h1>
-		</header>
-		<div id="main">
-			<div id="main_signup">
-				<form action="" method="POST" enctype="multipart/form-data">
-					<fieldset class="login_details">
-						<legend>Login details</legend>
-						<label for="email">
-							What's your email<br>
-							<input type="email" name="email" id="email" placeholder="Enter your email" required>
-						</label>
-						<label for="password">
-							Create a password<br>
-							<input type="password" name="password" id="password" placeholder="Enter your password" required>
-						</label>
-						<label for="password2">
-							Confirm your password<br>
-							<input type="password" name="password2" id="password2" placeholder="Enter your password again" required>
-						</label>
-					</fieldset>
-					
-					<fieldset class="personal_details">
-						<legend>Personal details</legend>
-						<label for="first_name">
-							What's your first name<br>
-							<input type="text" name="first_name" id="first_name" placeholder="Enter your first name" required>
-						</label>
-						<label for="middle_name">
-							What's your middle name<br>
-							<input type="text" name="middle_name" id="middle_name" placeholder="Enter your middle name" required>
-						</label>
-						<label for="last_name">
-							What's your surname<br>
-							<input type="text" name="last_name" id="last_name" placeholder="Enter your last name" required>
-						</label>
-						<label for="phone">
-							What's your phone no<br>
-							<input type="text" name="phone" id="phone" placeholder="Enter your phone no" required>
-						</label>
-						<div class="avatar_img">
-							<a class="avatar_select fake_btn button">Upload your profile photo</a><br>
-							<img class="upload_file avatar_pic" src="/static/assets/uploads/1607134320_avatar.jpg">
-						</div>
-					</fieldset>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <title>Form Examples | Bootstrap Based Admin Template - Material Design</title>
+    <!-- Favicon-->
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 
-					<fieldset class="work_details">
-						<legend>Work details</legend>
-						<label for="github">
-							What's your github page link<br>
-							<input type="url" name="github" id="github" placeholder="Enter your github page link">
-						</label>
-						<label for="designation">
-							What level are you at<br>
-							<select name="designation" id="designation">
-								<option value=""></option>
-							</select>
-						</label>
-						<label for="department">
-							What department are you applying to <br>
-							<select name="department" id="department">
-								<option value=""></option>
-							</select>
-						</label>
-						<div class="cv_doc">
-							<a class="cv_select fake_btn button">Upload your cv</a>
-							<img class="upload_file" src="/static/assets/uploads/cv.png">
-						</div>
-					</fieldset>
-					<button type="submit">Submit</button>
-				</form>
-				<!-- <div class="form_nav">
-					<button class="prev_btn not_visible">Prev</button>
-					<button class="next_btn">Next</button>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
+
+    <!-- Bootstrap Core Css -->
+    <link href="/static/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Waves Effect Css -->
+    <link href="/static/plugins/node-waves/waves.css" rel="stylesheet" />
+
+    <!-- Animation Css -->
+    <link href="/static/plugins/animate-css/animate.css" rel="stylesheet" />
+
+    <!-- Sweet Alert Css -->
+    <link href="/static/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
+
+    <!-- Custom Css -->
+    <link href="/static/css/style.css" rel="stylesheet">
+
+    <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
+    <link href="/static/css/themes/all-themes.css" rel="stylesheet" />
+</head>
+
+<body style="background-color: #fff;">
+	<div class="row clearfix" style="width: 80%; margin: 0px auto">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<div class="">
+				<!-- <div class="header">
+					<h2>
+						MULTI COLUMN
+					</h2>
 				</div> -->
-			</div>
-		<div>
+				<div class="body">
+					<form method="POST" enctype="multipart/form-data">
+						<div class="col-xs-12 col-sm-3 m-t-20">
+							<div class="card profile-card">
+								<div class="profile-header">&nbsp;</div>
+								<div class="profile-body">
+									<div class="image-area">
+										<img width="128" height="128" src="/static/images/1.jpg" class="upload_file avatar_pic" alt="Employee Image" />
+									</div>
+									<div class="content-area">
+										<!-- <h3>
+											{{ evaluator.user.first_name|title }}
+											{{ evaluator.user.last_name|title }}
+										</h3> -->
+										<!-- <p>Web Software Developer</p> -->
+										<p>Employee</p>
+									</div>
+								</div>
+							</div>
+							<a class="avatar_select fake_btn btn btn-default font-10" style="width: 100%;">UPLOAD PHOTO</a>
+						</div>
+						<div class="col-xs-12 col-sm-9">
+							<h3>Personal Details</h3>
+							<fieldset>
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="First Name*" required>
+											</div>
+										</div>
+									</div>
+								</div>
 
-		<script>
-			function fileManipulator (query, img) {
-				var el = document.body.querySelector(query);
-				var imageEl = document.body.querySelector(img);
-				el.addEventListener("change", () => {
-					for (let file of Array.from(el.files)) {
-						let reader = new FileReader()
-						reader.addEventListener("load", () => {
-							imageEl.src = reader.result;
-						});
-						reader.readAsDataURL(file);
-						console.log(el.files)
-					}
-				});
-			}
-			var avatar = document.body.querySelector(".avatar_select");
-			avatar.addEventListener("click", () => {
-				var avatar_input = document.body.querySelector("input[name=avatar]");
-				if (avatar_input) {
-					;
-				}
-				else {
-					avatar_input = document.createElement("input")
-					avatar_input.type = "file";
-					avatar_input.name = "avatar";
-					avatar_input.hidden = "hidden";
-					console.log(avatar_input)
-					avatar.parentElement.appendChild(avatar_input);
-				}
-				fileManipulator("input[name=avatar]", ".avatar_pic");
-					avatar_input.click();
-			});	
-		</script>
-		<!-- <script src="/static/assets/dist/js/formcontrol.js"></script> -->
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="Middle Name*" required>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="Last Name*" required>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="Phone no (e.g 07037234322)*" required>
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+
+							<h3>Login Details</h3>
+							<fieldset>
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="email" class="form-control" placeholder="Email*">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="password" class="form-control" placeholder="Password*">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="password" class="form-control" placeholder="Confirm Password*">
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+
+							<fieldset>
+								<div class="row clearfix">
+									<div class="col-md-3">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-3">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-3">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-3">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-3">
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+
+							<fieldset>
+								<div class="row clearfix">
+									<div class="col-md-2">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-2">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-2">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-2">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-2">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-2">
+											</div>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group">
+											<div class="form-line">
+												<input type="text" class="form-control" placeholder="col-md-2">
+											</div>
+										</div>
+									</div>
+								</div>
+							</fieldset>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- #END# Multi Column -->
+
+	<!-- Jquery Core Js -->
+	<script src="/static/plugins/jquery/jquery.min.js"></script>
+
+	<!-- Bootstrap Core Js -->
+	<script src="/static/plugins/bootstrap/js/bootstrap.js"></script>
+
+	<!-- Select Plugin Js -->
+	<script src="/static/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+
+	<!-- Slimscroll Plugin Js -->
+	<script src="/static/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+
+	<!-- Waves Effect Plugin Js -->
+	<script src="/static/plugins/node-waves/waves.js"></script>
+
+	<!-- Custom Js -->
+	<script src="/static/js/admin.js"></script>
+
+	<!-- Demo Js -->
+	<script src="/static/js/demo.js"></script>
 	</body>
+
 </html>
