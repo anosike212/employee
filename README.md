@@ -2,7 +2,7 @@
 cs project
 
 # install django
-# run >>python manage.py runserver in the ../webstuff/employee folder
+# run >>python manage.py runserver in the employee folder
 
 go to localhost:8000/login in your browser
 
